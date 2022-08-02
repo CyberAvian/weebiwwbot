@@ -1,6 +1,5 @@
 node_modules/
 .env
 channels.json
-greetings.json
 test.json
 test.js
