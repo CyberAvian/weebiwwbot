@@ -50,7 +50,7 @@ function onMessageHandler (target, context, msg, self) {
 
   switch (commandName) {
     case '!join':
-      if (current_channel === 'weebiwwbot') {
+      if (current_channel === '#weebiwwbot') {
         client.join(username);
         client.say(target, acceptJoin);
         console.log(`Joined ${username}'s channel.`);
