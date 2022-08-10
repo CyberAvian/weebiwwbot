@@ -22,7 +22,6 @@ const opts = {
 
 // Create a client with our options
 const client = new tmi.client(opts);
-var current_channel = '';
 
 // Register our event handlers (defined below)
 client.on('message', onMessageHandler);
@@ -50,27 +49,31 @@ function onMessageHandler (target, context, msg, self) {
 
   switch (commandName) {
     case '!join':
-      if (current_channel === '#weebiwwbot') {
-        client.join(username);
-        client.say(target, acceptJoin);
-        console.log(`Joined ${username}'s channel.`);
-
-        if(username !== 'weebiwwbot' && !channels.includes(username)) {
-          channels.push(username);
+      if (target === '#weebiwwbot') {
+        channelName = `#${username}`;
+        if(username !== 'weebiwwbot' && !channels.includes(channelName)) {
+          client.join(channelName);
+          console.log(`Joined ${username}'s channel.`);
+          client.say(target, `@${username}, ${acceptJoin}`);
+          channels.push(channelName);
           saveChannels(`Added ${username} to channel list`);
         } else {
           console.log(`Unable to join ${username}`);
+          const owomessage = owospeak.convert('I am unable to join your channel!', {stutter: true, tilde: true});
+          client.say(target, `@${username}, ${owomessage}`);
         }
       }
       break;
     case '!leave':
-      if (current_channel === '#weebiwwbot') {
-        client.part(target);
-        console.log(`Left ${target}'s channel.`);
-
+      if (target === '#weebiwwbot') {
         if(username !== 'weebiwwbot' && !channels.includes(username)) {
-          channels = channels.filter(channel => channel !== username);
-          saveChannels(`Removed ${username} from channel list`);
+          var channelName = `#${username}`;
+          client.part(channelName);
+          console.log(`Left ${username}'s channel.`);
+          channels = channels.filter(channel => channel !== channelName);
+          saveChannels(`Removed ${channelName} from channel list`);
+          const owomessage = owospeak.convert('I have left your channel. I will miss you!!!!', {stutter: true, tilde: true});
+          client.say(target, `@${username}, ${owomessage}`);
         }
       }
       break;
